@@ -28,7 +28,7 @@ class TemperatureScalingCalibrator(Calibrator):
         self.model = TemperatureScalingModel()
 
     def tune(self, logits, labels, device="cpu"):
-        nll_criterion = nn.CrossEntropyLoss().to(device)
+        nll_criterion = self.get_loss_func().to(device)
         self.model = self.model.to(device)
         optimizer = optim.LBFGS(self.model.parameters(), lr=self.lr, max_iter=self.lbfgs_max_iter)
 
@@ -43,5 +43,8 @@ class TemperatureScalingCalibrator(Calibrator):
     def save_model(self, filepath: str): save_model_pytorch(self.model, filepath)
 
     def load_model(self, filepath: str): load_model_pytorch(self.model, filepath)
+
+    def get_loss_func(self):
+        return nn.CrossEntropyLoss()
 
     def get_model(self): return self.model

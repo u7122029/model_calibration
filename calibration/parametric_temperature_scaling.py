@@ -8,6 +8,7 @@ from tqdm import tqdm
 from torchmetrics import MeanMetric
 
 from .base_calibrator import save_model_pytorch, load_model_pytorch, Calibrator
+from .criterions import OneHotMSE
 
 
 class PTSModel(nn.Module):
@@ -112,9 +113,8 @@ class PTSCalibrator(Calibrator):
         """
         assert logits.shape[1] == self.length_logits, "logits need to have same length as length_logits!"
 
-        labels = one_hot(labels, self.length_logits).float()
         dset = TensorDataset(logits, labels)
-        criterion = nn.MSELoss()
+        criterion = self.get_loss_func().to(device)
         optimiser = optim.Adam(self._model.parameters(), lr=self.lr, weight_decay=self.weight_decay)
 
         self._model.train()
@@ -143,5 +143,8 @@ class PTSCalibrator(Calibrator):
     def save_model(self, filepath: str): save_model_pytorch(self._model, filepath)
 
     def load_model(self, filepath: str): load_model_pytorch(self._model, filepath)
+
+    def get_loss_func(self):
+        return OneHotMSE()
 
     def get_model(self): return self._model

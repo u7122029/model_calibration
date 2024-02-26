@@ -48,5 +48,9 @@ class Calibrator(ABC):
         raise NotImplementedError()
 
     @abstractmethod
+    def get_loss_func(self):
+        raise NotImplementedError()
+
+    @abstractmethod
     def get_model(self):
         raise NotImplementedError()

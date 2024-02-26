@@ -3,16 +3,19 @@ from backbone_models import Backbone
 from torch import nn
 from torch.utils.data import DataLoader
 from tqdm import tqdm
-from torchvision.datasets import CIFAR10, CIFAR100, ImageNet, Imagenette, VisionDataset
+from torchvision.datasets import CIFAR10, CIFAR100, ImageNet, Imagenette, VisionDataset, ImageFolder
 from torchvision.datasets import vision
 import sys, inspect
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-DEFAULT_WEIGHTS_PATH = "weights"
-DEFAULT_LOGITS_PATH = "logits"
-DEFAULT_LABELS_PATH = "labels"
+
+DEFAULT_OUTPUT_PATH = "out"
+WEIGHTS_DIR = "weights"
+LOGITS_DIR = "logits"
+LABELS_DIR = "labels"
+RESULTS_DIR = "results"
+DEFAULT_MASKS_PATH = f"{DEFAULT_OUTPUT_PATH}/masks"
 DEFAULT_DATASET_PATH = "C:/ml_datasets"
-DEFAULT_RESULTS_PATH = "results"
 
 
 def get_logits_and_labels(model: nn.Module, dataloader: DataLoader, device=DEVICE):
@@ -37,20 +40,10 @@ def get_logits_and_labels(model: nn.Module, dataloader: DataLoader, device=DEVIC
     return logits_out, labels_out
 
 
-def get_class_bases(x):
-    bases = set()
-    for base in x.__bases__:
-        bases.add(base)
-        bases = bases.union(get_class_bases(base))
-    return bases
-
-
-def dset_class_predicate(x):
-    if not inspect.isclass(x): return False
-
-    class_bases = get_class_bases(x)
-    return VisionDataset in class_bases #or vision.VisionDataset in class_bases
-
-
-dataset_dict = inspect.getmembers(sys.modules[__name__], dset_class_predicate)
-dataset_dict = {x: y for x, y in dataset_dict}
+def list_collate_fn(items):
+    batch = []
+    labels = []
+    for inp, label in items:
+        batch.append(inp)
+        labels.append(label)
+    return batch, torch.Tensor(labels)
