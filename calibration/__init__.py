@@ -1,6 +1,7 @@
 import sys, inspect
 from .temperature_scaling import TemperatureScalingCalibrator
 from .parametric_temperature_scaling import PTSCalibrator
+from .identity_calibrator import IdentityCalibrator
 from .base_calibrator import Calibrator
 
 from torch import nn

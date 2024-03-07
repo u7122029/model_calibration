@@ -47,12 +47,8 @@ class ImageNet_Val(Subset, VisionDataset):
 
 
 class ImageNetO(ImageFolder):
-    def __init__(self, root: str, label_type: str="class", **kwargs):
+    def __init__(self, root: str, **kwargs):
         target_transform = None
-        if label_type == "dist":
-            target_transform = lambda x: 0  # 0 for out-of-distribution.
-        elif label_type not in {"dist", "class"}:
-            raise ValueError(f"label_type \"{label_type}\" not in ['dist', 'class'].")
         super().__init__(root, target_transform=target_transform, **kwargs)
 
 
@@ -63,13 +59,48 @@ class ImageNetO_Dist(ConcatDataset):
     def __init__(self, imagenet_root: str, imagenet_o_root: str):
         super().__init__([
             ImageNet_Val(imagenet_root, "test"),
-            ImageNetO(imagenet_o_root, "dist")
+            ImageNetO(imagenet_o_root)
         ])
 
 
 class ImageNetA(ImageFolder):
     def __init__(self, imagenet_a_root: str, **kwargs):
         super().__init__(imagenet_a_root, **kwargs)
+
+
+class ImageNetC_Blur(ImageFolder):
+    def __init__(self, imagenet_c_root: str, **kwargs):
+        print("Getting ImageNetC_Blur Data...")
+        super().__init__(str(Path(imagenet_c_root) / "blur"), **kwargs)
+        print("Done!")
+
+
+class ImageNetC_Digital(ImageFolder):
+    def __init__(self, imagenet_c_root: str, **kwargs):
+        print("Getting ImageNetC_Digital Data...")
+        super().__init__(str(Path(imagenet_c_root) / "digital"), **kwargs)
+        print("Done!")
+
+
+class ImageNetC_Extra(ImageFolder):
+    def __init__(self, imagenet_c_root: str, **kwargs):
+        print("Getting ImageNetC_Extra Data...")
+        super().__init__(str(Path(imagenet_c_root) / "extra"), **kwargs)
+        print("Done!")
+
+
+class ImageNetC_Noise(ImageFolder):
+    def __init__(self, imagenet_c_root: str, **kwargs):
+        print("Getting ImageNetC_Noise Data...")
+        super().__init__(str(Path(imagenet_c_root) / "noise"), **kwargs)
+        print("Done!")
+
+
+class ImageNetC_Weather(ImageFolder):
+    def __init__(self, imagenet_c_root: str, **kwargs):
+        print("Getting ImageNetC_Weather Data...")
+        super().__init__(str(Path(imagenet_c_root) / "weather"), **kwargs)
+        print("Done!")
 
 
 def get_imagenet_dset(imagenet_root: str, imagenet_o_root: str=None, version: str="calib"):

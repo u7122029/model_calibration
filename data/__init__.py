@@ -8,7 +8,12 @@ from .imagenet_variants import (ImageNet_Val,
                                 get_imagenet_o_mask,
                                 get_imagenet_a_mask,
                                 ImageNetO,
-                                ImageNetA)
+                                ImageNetA,
+                                ImageNetC_Blur,
+                                ImageNetC_Digital,
+                                ImageNetC_Extra,
+                                ImageNetC_Noise,
+                                ImageNetC_Weather)
 
 
 def get_class_bases(x):
